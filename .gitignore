@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# project specifics
+ddns_config.php
+ddns_config.py
