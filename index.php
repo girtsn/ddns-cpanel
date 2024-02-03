@@ -153,13 +153,14 @@ if (isset($_GET['type']) && ($_GET['type'] === 'A' || $_GET['type'] === 'AAAA'))
 
 }
 
+    $proto = isset($_SERVER['HTTPS'] ) ? 'https' : 'http';
     $message = exec('python ' . getcwd() . '/ddns.py --domain=' . $domain . ' --record_name=' . $record . ' --ip=' . $myip . ' --record_type=' . $type . ' --record_ttl=' . $ttl . ' 2>&1');
     echo($message);
     if (substr($message, 0, 4) === 'good' || substr($message, 0, 5) === 'nochg') {
-	file_put_contents('ddns-php.log', $outdate . ' - INFO - good ip update for agent=' . $_SERVER['HTTP_USER_AGENT'] . ' record=' . $record . ' ip=' . $myip . "\n", FILE_APPEND);
+	file_put_contents('ddns-php.log', $outdate . ' - INFO - good ip update for proto=' . $proto . ' agent=' . $_SERVER['HTTP_USER_AGENT'] . ' record=' . $record . ' ip=' . $myip . "\n", FILE_APPEND);
 	http_response_code(200);
     } else {
-        file_put_contents('ddns-php.log', $outdate . ' - ERROR - failure from running python agent=' . $_SERVER['HTTP_USER_AGENT'] . ' record=' . $record . ' ip=' . $myip . ' msg=' . $message . "\n", FILE_APPEND);
+        file_put_contents('ddns-php.log', $outdate . ' - ERROR - failure from running python proto=' . $proto . ' agent=' . $_SERVER['HTTP_USER_AGENT'] . ' record=' . $record . ' ip=' . $myip . ' msg=' . $message . "\n", FILE_APPEND);
         http_response_code(500);
     }
     
