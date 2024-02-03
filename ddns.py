@@ -3,6 +3,8 @@
 import logging
 import json
 import argparse
+from datetime import datetime
+from dateutil import tz
 
 try:
     # python 3
@@ -13,18 +15,8 @@ except ImportError:
     from urllib import urlencode
     from urllib2 import urlopen, Request
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-fh = logging.FileHandler('ddns-py.log')
-fh.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-fh.setFormatter(formatter)
-logger.addHandler(fh)
-ch = logging.StreamHandler()
-ch.setLevel(logging.WARN)
-formatter2 = logging.Formatter('%(message)s')
-ch.setFormatter(formatter2)
-logger.addHandler(ch)
+def timetz(*args):
+    return datetime.now(tzz).timetuple()
 
 def _get_zone_and_name(base_url, base_headers, base_data,  domain):
         """Find a suitable zone for a domain
@@ -101,11 +93,33 @@ def _get_record_lines_and_data(base_url, base_headers, base_data, cpanel_zone, r
 # some guidance on what to return: https://help.dyn.com/remote-access-api/return-codes/
 
 if __name__ == "__main__":
+
+    tzz = tz.gettz('UTC')
+
+    logging.Formatter.converter = timetz
+
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.DEBUG)
+    fh = logging.FileHandler('ddns-py.log')
+    fh.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    fh.setFormatter(formatter)
+    logger.addHandler(fh)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.WARN)
+    formatter2 = logging.Formatter('%(message)s')
+    ch.setFormatter(formatter2)
+    logger.addHandler(ch)
+
     try:
         from ddns_config import CONFIG
     except ImportError:
         logger.error("911 Error: ddns-config.py NOT found")
         exit()
+
+    tzz = tz.gettz(CONFIG['timezone'])
+
+    logging.Formatter.converter = timetz
 
     # Show all arguments
     parser = argparse.ArgumentParser()
@@ -204,5 +218,3 @@ if __name__ == "__main__":
         else:
             logger.error("911 error updating record: %s" % response_data['data'][0]['result']['statusmsg'])
             exit(1)
-
-# vim: set ts=4 sw=4:
