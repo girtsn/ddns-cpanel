@@ -31,7 +31,7 @@ def _get_zone_and_name(base_url, base_headers, base_data,  domain):
         data['cpanel_jsonapi_func'] = 'fetchzones'
 
         logger.debug("req fetchzones: url='%s', data='%s'" % (base_url, urlencode(data) ) )
-	try:
+        try:
             response = urlopen(
 	        Request(
     	            "%s?%s" % (base_url, urlencode(data)),
@@ -41,7 +41,7 @@ def _get_zone_and_name(base_url, base_headers, base_data,  domain):
         except Exception as e:
     	    logger.error('911 req fetchzones failed: %s', e);
     	    exit(1);
-    	response_data = json.load(response)['cpanelresult']
+        response_data = json.load(response)['cpanelresult']
         logger.debug("rsp fetchzones: data='%s'" % json.dumps(response_data, indent=4))
         matching_zones = []
         for zone in response_data['data'][0]['zones']:
@@ -74,16 +74,16 @@ def _get_record_lines_and_data(base_url, base_headers, base_data, cpanel_zone, r
         data['type'] = record_type
 
         logger.debug("req fetchzone_records: url='%s', data='%s'" % (base_url, urlencode(data) ) )
-	try:
+        try:
             response = urlopen(
 	        Request(
     	            "%s?%s" % (base_url, urlencode(data)),
     	            headers=base_headers
         	    )
     	    )
-	except Exception as e:
-	    logger.error('911 req fetchzone_records failed: %s', e);
-	    exit(1);
+        except Exception as e:
+	        logger.error('911 req fetchzone_records failed: %s', e);
+	        exit(1);
         response_data = json.load(response)['cpanelresult']
         logger.debug("rsp fetchzone_records: data='%s'" % json.dumps(response_data, indent=4))
         record_lines = [int(d['line']) for d in response_data['data']]
@@ -130,10 +130,10 @@ if __name__ == "__main__":
     parser.add_argument('--domain', help='Your domain, e.g.. example.com', required=True)
     parser.add_argument('--v', action='store', nargs='*', help="Debug loglevels")
     try:
-	args = parser.parse_args()
+        args = parser.parse_args()
     except Exception as e:
-	logger.error('911 argumentg parsing failed: %s', e);
-	exit(1);
+        logger.error('911 argumentg parsing failed: %s', e);
+        exit(1);
 
     if (args.v != None):
         ch.setLevel(logging.DEBUG)
@@ -165,16 +165,16 @@ if __name__ == "__main__":
         data['ttl'] = args.record_ttl
 
         logger.debug("req add_zone_record: url='%s', data='%s'" % (base_url, urlencode(data) ) )
-	try:
+        try:
             response = urlopen(
 	        Request(
     	            "%s?%s" % (base_url, urlencode(data)),
         	    headers=base_headers,
         	)
     	    )
-    	except Exception as e:
-	    logger.error('911 req add_zpne_record failed: %s', e);
-	    exit(1);
+        except Exception as e:
+	        logger.error('911 req add_zpne_record failed: %s', e);
+	        exit(1);
         response_data = json.load(response)['cpanelresult']
         logger.debug("rsp add_zone_record: data='%s'" % json.dumps(response_data, indent=4))
         if response_data['data'][0]['result']['status'] == 1:
@@ -187,7 +187,7 @@ if __name__ == "__main__":
         if (len(record_lines) != 1):
     	    logger.error("911 not exactly one existing record")
     	    exit(1)
-    	if (exist_data[0]['address'] == args.ip and  exist_data[0]['type'] == args.record_type and exist_data[0]['ttl'] == args.record_ttl):
+        if (exist_data[0]['address'] == args.ip and  exist_data[0]['type'] == args.record_type and exist_data[0]['ttl'] == args.record_ttl):
     	    logger.warn("nochg %s", args.ip)
     	    exit(0)
         data = base_data.copy()
@@ -207,9 +207,9 @@ if __name__ == "__main__":
         	    headers=base_headers,
         	)
     	    )
-    	except Exception as e:
-	    logger.error('911 req edit_zone_record failed: %s', e);
-	    exit(1);
+        except Exception as e:
+	        logger.error('911 req edit_zone_record failed: %s', e);
+	        exit(1);
         response_data = json.load(response)['cpanelresult']
         logger.debug("rsp edit_zone_record: data='%s'" % json.dumps(response_data, indent=4))
         if response_data['data'][0]['result']['status'] == 1:
